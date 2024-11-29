@@ -1,5 +1,6 @@
-import math
-import pygame
-
-def _init_():
-  
+Class Terrain():
+height = ""
+Radius = ""
+  Def _init_(self):
+    self.height =
+    self.Radius = 
