@@ -1,6 +1,5 @@
 import pygame
+import mysql.connector 
 
-
-def __init__():
-  pygame.display.set_mode()
-  
+mydb = mysql.connector.connect(host = "", user = "", password="")
+mydb.cursor().execute("CREATE DATABASE models")
