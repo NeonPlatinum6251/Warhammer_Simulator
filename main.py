@@ -1,5 +1,16 @@
 import pygame
-import mysql.connector 
+from sys import exit
+#screen setup
+pygame.init()
+tabletop = pygame.display.set_mode((1200,880))
+pygame.display.set_caption("Warhammer40k_Simulator")
+icon = pygame.image.load('icon.png')
+pygame.display.set_icon(icon)
 
-mydb = mysql.connector.connect(host = "", user = "", password="")
-mydb.cursor().execute("CREATE DATABASE models")
+
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            exit()
+    pygame.display.update()
