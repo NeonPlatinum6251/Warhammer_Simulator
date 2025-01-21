@@ -10,7 +10,7 @@ pygame.display.set_caption("Warhammer40k_Simulator")
 #pygame.display.set_icon(icon)
 clock = pygame.time.Clock()
 Models = mysql.connector.connect(host = "localhost", user = "", password = "") #database not yet created
-
+mycursor = Models.cursor()
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
