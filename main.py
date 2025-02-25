@@ -6,6 +6,7 @@ from sys import exit
 #initialise variables and lists
 base_terrain_pieces = []
 base_models = [] #these are the starting models , might make it an array
+selected_model = None
 pygame.init() #initialises pygame
 tabletop = pygame.display.set_mode((1200,880)) #origin is top left!!! # i could make some tabletops with some pngs 
 pygame.display.set_caption("Warhammer40k_Simulator") #this names the window 
@@ -15,25 +16,23 @@ pygame.draw.rect(tabletop,(176,176,176),(0,0,100,1200)) # draw the hotbar make i
 clock = pygame.time.Clock() 
 mouse = pygame.mouse()
 
-gridsize = 10
-gridwidth = 120
-gridheight = 90
-grid =[[None for _ in range(gridwidth)] for _ in range(gridheight)]
+gridsize = 10 #the amount of pixels an individual square takes up in the grid  
+gridwidth = 120 #how many squares wide
+gridheight = 90 # how many squares tall
+grid =[[None for _ in range(gridwidth)] for _ in range(gridheight)] #creates the grid as an empty 2D array 
 
 while True:  #this is the main loop where all the display stuff will happen
-    for event in pygame.event.get():
+    for event in pygame.event.get(): #when an event happens 
         if event.type == pygame.QUIT: #this loop makes sure python closes properly
-            pygame.quit() 
+            pygame.quit() #stops 
             exit()
         #if event.type == pygame.MOUSEBUTTONDOWN:
 
     pygame.display.update() #updates whats on the screen
     clock.tick(60)
 
-#im gonna write some of my classes here
-
 class Button: #for clicking
-    def __init__(self,x,y,bwidth,bheight,buttontext,onclick): #I JUST REMEMBERED MODELS AND STUFF NEED BUTTON FUNCTIONS DELETE THIS GIVE the STUFF TO Terrrain instead trust me/ nah its chill just needs on click
+    def __init__(self,x,y,bwidth,bheight,buttontext,onclick): 
         self.x = x
         self.y = y
         self.bwidth = bwidth
@@ -62,4 +61,4 @@ def placefirstmodels(basemodels): # places the starting models in the hotbar
             #else: #all good?
                 #drawterrain(placex,placey) #draw it in the place 
                 #model_there = False #makes sure it doesnt do it again
-def 
+def drag_n_drop() #forgot what i was doing haha 
