@@ -1,5 +1,3 @@
-import pygame
-
 class Terrain: #the terrain class where all info for terrain will be
     def __init__(self,name,radius,speed,height,onclick==None,x,y): 
         in_height = int('') #need to initialise it so it can be used in the loop and same with below
@@ -31,10 +29,6 @@ class Terrain: #the terrain class where all info for terrain will be
         else:
             print("Theres an Error somewhere buddy!") #not sure when this would happen but I imagine the error would be in 
     
-    def move(self,new_x, new_y):
-        self.x = new_x
-        self.y = new_y
-
 class Model(Terrain): #terrain is the parent class to models 
     def __init__(self,name,radius,speed,height,arange,melee,wounds,points):
         super().__init__(name,radius,speed,height,x,y) #Inherits all the stuff from Terrain and allows to add more without the one above overriding
@@ -51,3 +45,4 @@ class Model(Terrain): #terrain is the parent class to models
         if grid[grid_y][grid_x] is None:
             self.x = new_x
             self.y =new_y
+            
