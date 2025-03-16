@@ -1,7 +1,5 @@
-#libraries
 import pygame
 from sys import exit
-
 
 class Terrain: #the terrain class where all info for terrain will be
     def __init__(self,onclick=None): 
@@ -56,6 +54,40 @@ class Model(Terrain): #terrain is the parent class to models
             self.x = new_x
             self.y =new_y
     '''     
+class InputBox:
+    def __init__(self,x,y,w,h,text=''):
+        self.rect = pygame.rect(x,y,w,h)
+        self.color = COLOR_INACTIVE
+        self.text = text 
+        self.txt_surface = FONT.render(text, True, self.color)
+        self.active = False
+    def clickbox(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.rect.collidepoint(event.pos):
+                self.active = not self.active
+            else:
+                self.active = False
+            self.color = COlOR_ACTIVE if self.active else COLOR_INACTIVE
+        if event.type == pygame.KEYDOWN:
+            if self.active:
+                if event.key == pygame.K_RETURN:
+                    print(self.text)
+                    self.text = ''
+                    return text 
+                elif event.key == pygame.K_BACKSPACE:
+                    self.text = self.text[:-1]
+                else:
+                    self.text += event.unicode
+                self.txt_surface = FONT.render(self.text, True, self.color)
+    def update(self):
+        width = max(200,self.txt_surface.getwidth()+10)
+        self.rect.w = width 
+    def draw(self,screen):
+        screen.blit(self.txt_surface, (self.rect.x+5,self.rect.y+5))
+        pygame.draw.rect(tabletop,self.color, self.rect, 2)
+
+testtype = InputBox(300,300,100,60,":3")
+'''
 def prompts(tabletop,question):
     pygame.font.init()
     current_string =[]
@@ -72,8 +104,11 @@ def prompts(tabletop,question):
             current_string.append(chr(inkey))
         display_box(screen, question + ": " + string.join(current_string,""))
     return string.join(current_string,"")
-
+'''
 #initialise variables and lists
+pygame.font.init()
+COLOR_INACTIVE = pygame.Color("blue")
+COLOR_ACTIVE = pygame.Color("green")
 base_font =pygame.font.Font(None,32)
 base_terrain_pieces = []
 base_models = [] #these are the starting models , might make it an array
@@ -92,7 +127,7 @@ gridwidth = 120 #how many squares wide
 gridheight = 90 # how many squares tall
 grid =[[None for _ in range(gridwidth)] for _ in range(gridheight)] #creates the grid as an empty 2D array 
 
-prompts(tabletop,"what is your name?")
+#prompts(tabletop,"what is your name?")
 testmodel = Model()
 
 
@@ -102,11 +137,10 @@ while True:  #this is the main loop where all the display stuff will happen
             pygame.quit() #stops 
             exit()
         #if event.type == pygame.MOUSEBUTTONDOWN:
-        prompts(tabletop,"what is your name?")
+        #prompts(tabletop,"what is your name?")
     testmodel.drawmodel(tabletop)
     pygame.display.update() #updates whats on the screen
     clock.tick(60)
-
 
 '''
 class Button: #for clicking
@@ -140,4 +174,5 @@ def placefirstmodels(basemodels): # places the starting models in the hotbar
                 #drawterrain(placex,placey) #draw it in the place 
                 #model_there = False #makes sure it doesnt do it again
 #def drag_n_drop():
+'''
 '''
