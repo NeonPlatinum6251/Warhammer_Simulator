@@ -8,30 +8,34 @@ class Terrain: #the terrain class where all info for terrain will be
         valid_shapes = ["square","circle","ellipse"] #these are the shapes that can be used
         self.name = ""
         self.radius = 0
-        self.speed = 99999 #this is how much it can move per turn
+        self.speed = 0 #this is how much it can move per turn
         self.shape = ""
         self.height = ""
         self.onclick = onclick #clicky stuff
 
         self.name_box = InputBox(300,100,200,32, "Enter Terrain name: ")
-        self.height_box = InputBox(300,150,200,32, "Enter Terrain Height: ")
-        self.shape_box = InputBox(300,200,200,32,"enter Terrain Shape ")
-        self.radius_box = InputBox(300,250,200,32, "enter terrain size: ")
+        self.height_box = InputBox(300,100,200,32, "Enter Terrain Height: ")
+        self.shape_box = InputBox(300,100,200,32,"enter Terrain Shape ")
+        self.radius_box = InputBox(300,100,200,32, "enter terrain size: ")
 
-        self.questions= ["name","height", "shape", "radius"]
+        self.questions = ["name","height", "shape", "radius"]
         self.currentquestion = 0
 
     def update(self,event):
-        if self.currentquestion ==0:
-            self.name_box.clickbox(event)
-        elif self.currentquestion == 1:
-            self.height_box.clickbox(event)
-        elif self.currentquestion == 2:
-            self.shape_box.clickbox(event)
-        elif self.currentquestion == 3:
-            self.radius_box.clickbox(event)
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+            self.next_question()
+        else:
+            if self.currentquestion ==0:
+                self.name_box.clickbox(event)
+            elif self.currentquestion == 1:
+                self.height_box.clickbox(event)
+            elif self.currentquestion == 2:
+                self.shape_box.clickbox(event)
+            elif self.currentquestion == 3:
+                self.radius_box.clickbox(event)
         
     def draw(self, screen):
+        screen.fill((0,0,0))
         if self.currentquestion == 0:
             self.name_box.draw(screen)
         elif self.currentquestion == 1:
@@ -44,19 +48,23 @@ class Terrain: #the terrain class where all info for terrain will be
     def next_question(self):
         if self.currentquestion == 0 and self.name_box.text:
             self.name = self.name_box.text
+            self.name_box.text = ""
             self.currentquestion += 1
         elif self.currentquestion == 1 and self.height_box.text:
             try:
                 self.height = int(self.height_box.text)
+                self.height_box.text = ""
                 self.currentquestion += 1
             except ValueError:
                 print("Invalid height input!")
         elif self.currentquestion == 2 and self.shape_box.text:
             self.shape = self.shape_box.text
+            self.shape_box.text = ""
             self.currentquestion += 1
         elif self.currentquestion == 3 and self.radius_box.text:
             try:
                 self.radius = int(self.radius_box.text)
+                self.radius_box= ""
                 self.currentquestion += 1
             except ValueError:
                 print("Invalid radius input!")
@@ -122,7 +130,7 @@ class InputBox:
                 if event.key == pygame.K_RETURN:
                     print(self.text)
                     self.text = ''
-                elif event.key == pygame.K_BACKSPACE:
+                elif event.key == pygame.K_BACKSPACE:  
                     self.text = self.text[:-1]
                 else:
                     self.text += event.unicode
@@ -133,6 +141,7 @@ class InputBox:
     def draw(self,screen):
         label_surface = base_font.render(self.label,True,pygame.Color("white"))
         screen.blit(label_surface, (self.rect.x, self.rect.y -25))
+        pygame.draw.rect(screen, pygame.Color("black"),self.rect)
         screen.blit(self.txt_surface, (self.rect.x + 5,self.rect.y + 5))
         pygame.draw.rect(tabletop,self.color, self.rect, 2)
 
@@ -146,7 +155,7 @@ tabletop = pygame.display.set_mode((1200,880)) #origin is top left!!! # i could 
 pygame.display.set_caption("Warhammer40k_Simulator") #this names the window 
 #icon = pygame.image.load('icon.png')   #I don't have the file as png yet
 #pygame.display.set_icon(icon)
-pygame.draw.rect(tabletop,(176,176,0),(0,0,100,1200)) # draw the hotbar make it scrollable by taking the scroll input moving stuff and when it tocuhes a tiny bar at the top to make it disapear
+pygame.draw.rect(tabletop,(176,176,176),(0,0,100,1200)) # draw the hotbar
 clock = pygame.time.Clock() 
 mouse = pygame.mouse
 green = (0,255,0)
@@ -158,9 +167,9 @@ grid =[[None for _ in range(gridwidth)] for _ in range(gridheight)] #creates the
 
 #test objects
 testmodel = Model()
-testtype = InputBox(300,300,100,60,'')
-testtype.draw(tabletop)
+
 while True:  #this is the main loop where all the display stuff will happen
+    tabletop.fill((0,0,0))
     for event in pygame.event.get(): #when an event happens 
         if event.type == pygame.QUIT: #this loop makes sure python closes properly
             pygame.quit() #stops 
