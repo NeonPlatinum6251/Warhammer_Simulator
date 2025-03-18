@@ -72,12 +72,9 @@ class Terrain: #the terrain class where all info for terrain will be
     def is_complete(self):
         return self.currentquestion >= len(self.questions)
  
-        #self.x = x
-        #self.y = y
-
     def drawterrain(self,x,y,shape): #draws the model as the chosen values
         if shape == 'square':
-            pygame.draw.rect(tabletop, green, (x,y,self.radius,self.radius)) #draws it for now but im thinking i make it a surface then blit it for collisions and such
+            pygame.draw.rect(tabletop, green, (x,y,self.radius,self.radius)) #so why you drawing a f@#!ing circle then
         elif shape == 'circle':
             pygame.draw.circle(tabletop, green,(x + size // 2, y + self.radius // 2),self.radius //2)
         elif shape == 'elipse':
@@ -155,7 +152,7 @@ tabletop = pygame.display.set_mode((1200,880)) #origin is top left!!! # i could 
 pygame.display.set_caption("Warhammer40k_Simulator") #this names the window 
 #icon = pygame.image.load('icon.png')   #I don't have the file as png yet
 #pygame.display.set_icon(icon)
-pygame.draw.rect(tabletop,(176,176,176),(0,0,100,1200)) # draw the hotbar
+ # draw the hotbar
 clock = pygame.time.Clock() 
 mouse = pygame.mouse
 green = (0,255,0)
@@ -180,6 +177,7 @@ while True:  #this is the main loop where all the display stuff will happen
     testmodel.draw(tabletop)
     if testmodel.is_complete():
           testmodel.drawmodel(tabletop)
+    pygame.draw.rect(tabletop,(176,176,176),(0,0,100,1200))
     pygame.display.update() #updates whats on the screen
     clock.tick(60)
 
