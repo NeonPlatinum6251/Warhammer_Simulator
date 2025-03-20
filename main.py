@@ -12,12 +12,13 @@ class Terrain: #the terrain class where all info for terrain will be
         self.shape = ""
         self.height = ""
         self.onclick = onclick #clicky stuff
-
+        self.dragging = False 
+        self.x = 200
+        self.y = 200
         self.name_box = InputBox(300,100,200,32, "Enter Terrain name: ")
         self.height_box = InputBox(300,100,200,32, "Enter Terrain Height: ")
         self.shape_box = InputBox(300,100,200,32,"enter Terrain Shape ")
         self.radius_box = InputBox(300,100,200,32, "enter terrain size: ")
-
         self.questions = ["name","height", "shape", "radius"]
         self.currentquestion = 0
 
@@ -35,7 +36,7 @@ class Terrain: #the terrain class where all info for terrain will be
                 self.radius_box.clickbox(event)
         
     def draw(self, screen):
-        screen.fill((0,0,0))
+        tabletop.fill((0,0,0))
         if self.currentquestion == 0:
             self.name_box.draw(screen)
         elif self.currentquestion == 1:
@@ -72,16 +73,17 @@ class Terrain: #the terrain class where all info for terrain will be
     def is_complete(self):
         return self.currentquestion >= len(self.questions)
  
-    def drawterrain(self,x,y,shape): #draws the model as the chosen values
+    def drawterrain(self,x,y,shape,): #draws the model as the chosen values
         if shape == 'square':
             pygame.draw.rect(tabletop, green, (x,y,self.radius,self.radius)) #so why you drawing a f@#!ing circle then
+            self.thing = pygame.Rect(x,y,self.radius,self.radius)
         elif shape == 'circle':
-            pygame.draw.circle(tabletop, green,(x + size // 2, y + self.radius // 2),self.radius //2)
+            pygame.draw.circle(tabletop, green,(x + self.radius, y + self.radius),self.radius)
+            self.thing = pygame.Rect(x,y,self.radius,self.radius)
         elif shape == 'elipse':
-            pygame.draw.ellipse(tabletop, green, (x,y,self.radius,self.radius // 2))
-        else:
-            print("Theres an Error somewhere buddy!")
-    
+            pygame.draw.ellipse(tabletop, green, (x,y,self.radius,self.radius))
+            self.thing = pygame.Rect(x,y,self.radius,self.radius)        
+
 class Model(Terrain): #terrain is the parent class to models 
     def __init__(self):
         super().__init__() #Inherits all the stuff from Terrain and allows to add more without the one above overriding
@@ -94,14 +96,8 @@ class Model(Terrain): #terrain is the parent class to models
 
     def drawmodel(self,tabletop):
         pygame.draw.circle(tabletop,(255,0,0),(self.x,self.y) ,self.radius)
-    '''
-    def move(self,new_x, new_y, grid):
-        grid_x = new_x // 10
-        grid_y = new_y // 10
-        if grid[grid_y][grid_x] is None:
-            self.x = new_x
-            self.y =new_y
-    '''     
+    
+
 pygame.font.init()
 COLOR_INACTIVE = pygame.Color("blue")
 COLOR_ACTIVE = pygame.Color("green")
@@ -142,8 +138,35 @@ class InputBox:
         screen.blit(self.txt_surface, (self.rect.x + 5,self.rect.y + 5))
         pygame.draw.rect(tabletop,self.color, self.rect, 2)
 
-#initialise variables and lists
+class Button: #for clicking
+    def __init__(self,x,y,w,h,buttontext="",onclick=None): 
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
+        self.buttontext = buttontext
+        self.onclick = onclick
+        self.font = pygame.font.Font(None,24)
+        self.rect = pygame.Rect(self.x,self.y,self.w, self.h)
 
+    def draw(self, surface):
+        pygame.draw.rect(tabletop, (100, 100, 100), self.rect)
+        text_surface = self.font.render(self.buttontext, True, (255, 255, 255))
+        surface.blit(text_surface, (self.x + 5, self.y + 5))
+
+    def check_click(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.rect.collidepoint(event.pos):
+                if self.onclick:
+                    self.onclick()
+
+def create_terrain():
+    testmodel.append(Terrain())
+    print(len(testmodel))
+
+    
+#initialise variables and lists
+testmodel = []
 base_terrain_pieces = []
 base_models = [] #these are the starting models , might make it an array
 selected_model = None #which model is selected 
@@ -163,54 +186,41 @@ gridheight = 90 # how many squares tall
 grid =[[None for _ in range(gridwidth)] for _ in range(gridheight)] #creates the grid as an empty 2D array 
 
 #test objects
-testmodel = Model()
+testbutton = Button(600,600,150,50,"create new model ",create_terrain)
 
 while True:  #this is the main loop where all the display stuff will happen
-    tabletop.fill((0,0,0))
     for event in pygame.event.get(): #when an event happens 
         if event.type == pygame.QUIT: #this loop makes sure python closes properly
             pygame.quit() #stops 
             exit()
-        testmodel.update(event)
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-            testmodel.next_question()
-    testmodel.draw(tabletop)
-    if testmodel.is_complete():
-          testmodel.drawmodel(tabletop)
+        testbutton.check_click(event) 
+        for model in testmodel:
+            if model:
+                model.update(event)
+    tabletop.fill((0,0,0))
+    testbutton.draw(tabletop)
+    for model in testmodel:
+        if model:
+            model.draw(tabletop)
+            if model.is_complete():
+                model.drawterrain(model.x,model.y,model.shape)
+                testbutton.draw(tabletop)
+    for model in testmodel:
+            if model:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_x,mouse_y = pygame.mouse.get_pos()
+                    if model.thing.collidepoint(event.pos):
+                        dragging = True
+                        offset_x = mouse_x - model.x
+                        offset_y = mouse_y - model.y
+
+                if event.pygame == MOUSEBUTTONUP:
+                    dragging = False 
+        
+                if dragging:
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+                    model.x = mouse_x - offset_x
+                    model.y = mouse_y - offset_y
     pygame.draw.rect(tabletop,(176,176,176),(0,0,100,1200))
     pygame.display.update() #updates whats on the screen
     clock.tick(60)
-
-'''
-class Button: #for clicking
-    def __init__(self,x,y,bwidth,bheight,buttontext,onclick): 
-        self.x = x
-        self.y = y
-        self.bwidth = bwidth
-        self.bheight = bheight
-        self.buttontext = buttontext
-        self.onclick = onclick
-        self.font = pygame.font.Font(None,24)
-        
-    def draw(self, surface):
-        pygame.draw.rect(surface, (100, 100, 100), (self.x, self.y, self.bwidth, self.bheight))
-        text_surface = self.font.render(self.buttontext, True, (255, 255, 255))
-        surface.blit(text_surface, (self.x + 5, self.y + 5))
-
-    def check_click(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            mx, my = pygame.mouse.get_pos()
-            if self.x <= mx <= self.x + self.bwidth and self.y <= my <= self.y + self.bheight:
-                self.onclick()
-    
-def placefirstmodels(basemodels): # places the starting models in the hotbar 
-    model_there = True #used to check if there is already a model where its trying to place
-    #for i in len(base_models): #does it for each starter model
-        #while model_there == True: 
-            #if # a model is at placex and placey
-                #placey += 400 #move it down
-            #else: #all good?
-                #drawterrain(placex,placey) #draw it in the place 
-                #model_there = False #makes sure it doesnt do it again
-#def drag_n_drop():
-'''
