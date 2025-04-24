@@ -98,7 +98,7 @@ class Model(Terrain): #terrain is the parent class to models
     def __init__(self):
         super().__init__() #Inherits all methods stuff from Terrain
     
-        self.name_box = InputBox(300,100,200,32, "Enter Model name: ") # the questions for the models 
+        self.name_box = InputBox(300,100,200,32, "Enter Model name: ") #the questions for the models 
         self.shape_box = InputBox(300,100,200,32,"enter Model Shape ")
         self.radius_box = InputBox(300,100,200,32, "enter Model size: ")
         self.questions = ["name","shape", "radius"]
@@ -208,24 +208,28 @@ green = (0,255,0) #the colour green
 blue = (0,0,255)
 
 #test objects
-testbutton = Button(120,700,150,50,"create new Terrain",create_terrain) #create new terrain button 
-modelbutton = Button(120,600,150,50,"create new model",create_model) #create new model button 
+testbutton = Button(110,800,150,50,"create new Terrain",create_terrain) #create new terrain button 
+modelbutton = Button(110,720,150,50,"create new model",create_model) #create new model button 
 dragging = False #deez nuts 
+pointfont = pygame.font.Font(None,24)
 
 def pointcounter():
+    totalpoints = 0 
     for model in testmodel:
-        if model 
-        points += model.points
-    tabletop.blit
+        if model:
+            totalpoints += model.points
+    pointstext = "Army Value:" + str(totalpoints)
+    pointsurface = pointfont.render(pointstext,True,(255,255,255))
+    tabletop.blit(pointsurface, (550,0))
 
 
 def placebasemodels(): #this function creates some default models 
     Terminator = Model()
-    Terminator.quick_create("terminator",50,5,24,2,5,34,20,50)
+    Terminator.quick_create("Terminator",50,5,24,2,5,34,1,20)
     testmodel.append(Terminator)
 
     Einhyr_Heartguard = Model()
-    Einhyr_Heartguard.quick_create("Terminator",50,5,24,3,6,30,20,150)
+    Einhyr_Heartguard.quick_create("Terminator",50,5,24,3,6,30,1,140)
     testmodel.append(Einhyr_Heartguard)
 
 placebasemodels()
@@ -248,12 +252,12 @@ while True:  #this is the main loop where all the things that are seen and need 
 
     tabletop.fill((0,0,0)) # clears the screen 
     pygame.draw.rect(tabletop,(176,176,176),(0,0,100,1200)) #draws the hotbar 
-
+    pointcounter()
     for model in testmodel:
         if model:
             if model.is_complete(): #checks if the model is complete
                 model.drawterrain(model.x,model.y,model.shape)
-            model.draw(tablet+op)
+            model.draw(tabletop)
         
     if all(model.is_complete() for model in testmodel):
         testbutton.draw(tabletop)
@@ -284,8 +288,6 @@ while True:  #this is the main loop where all the things that are seen and need 
     '''
     stuff i need to add for it to be complete:
     when no mouse motion and model not touching hotbar and not clicked display all the range and shit   
-    model create button
     models cannot be placed on top of each other
-    point counter (piece of piss)
     '''
     # i could make some tabletops with some pngs 
